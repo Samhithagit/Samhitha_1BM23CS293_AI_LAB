@@ -6,7 +6,6 @@ def vacuum_agent():
     state = {'A': A, 'B': B}
     cost = 0
 
-    # both clean
     if state['A'] == 0 and state['B'] == 0:
         print("Turning vacuum off")
         print("Cost:", cost)
@@ -77,7 +76,6 @@ def vacuum_agent():
     print(state)
 
 
-# Run
 vacuum_agent()
 
 
