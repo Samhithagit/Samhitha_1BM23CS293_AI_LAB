@@ -1,0 +1,77 @@
+from collections import deque
+
+moves = {
+    0: [1, 3],
+    1: [0, 2, 4],
+    2: [1, 5],
+    3: [0, 4, 6],
+    4: [1, 3, 5, 7],
+    5: [2, 4, 8],
+    6: [3, 7],
+    7: [4, 6, 8],
+    8: [5, 7]
+}
+
+def bfs(start, goal):
+    queue = deque()
+    queue.append((start, start.index('0'), []))  # state, index of zero, path
+    visited = set()
+    visited.add(start)
+
+    all_states = []  # To record all visited states (branches)
+
+    while queue:
+        state, zero_pos, path = queue.popleft()
+        all_states.append(state)
+
+        if state == goal:
+            return path, all_states
+        
+        for move_pos in moves[zero_pos]:
+            new_state = list(state)
+            new_state[zero_pos], new_state[move_pos] = new_state[move_pos], new_state[zero_pos]
+            new_state_str = ''.join(new_state)
+
+            if new_state_str not in visited:
+                visited.add(new_state_str)
+                queue.append((new_state_str, move_pos, path + [new_state_str]))
+    return None, all_states
+
+def print_puzzle(state_str):
+    for i in range(0, 9, 3):
+        print(' '.join(state_str[i:i+3]).replace('0', '_'))
+    print()
+
+def is_valid_state(state):
+    return len(state) == 9 and set(state) == set('012345678')
+
+if __name__ == '__main__':
+    start_state = input("Enter the initial state (9 digits, 0 for blank): ").strip()
+    goal_state = input("Enter the goal state (9 digits, 0 for blank): ").strip()
+
+    if not is_valid_state(start_state):
+        print("Invalid initial state! Make sure to enter exactly 9 digits including 0.")
+    elif not is_valid_state(goal_state):
+        print("Invalid goal state! Make sure to enter exactly 9 digits including 0.")
+    else:
+        print("\nInitial State:")
+        print_puzzle(start_state)
+        print("Goal State:")
+        print_puzzle(goal_state)
+
+        path, all_states = bfs(start_state, goal_state)
+
+        print(f"Total states explored (branches): {len(all_states)}")
+        print("All explored states:")
+        for state in all_states:
+            print_puzzle(state)
+
+        if path:
+            print(f"Solution found in {len(path)} moves:")
+            for step in path:
+                print_puzzle(step)
+        else:
+            print("No solution found.")
+
+
+        print("Samhitha A 1BM23CS293")
