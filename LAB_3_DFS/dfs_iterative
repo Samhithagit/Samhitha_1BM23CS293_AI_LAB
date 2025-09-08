@@ -1,0 +1,59 @@
+def get_moves(state):
+    idx = state.index("_")
+    x, y = divmod(idx, 3)
+    moves = []
+    for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
+        nx, ny = x+dx, y+dy
+        if 0 <= nx < 3 and 0 <= ny < 3:
+            nidx = nx*3 + ny
+            lst = list(state)
+            lst[idx], lst[nidx] = lst[nidx], lst[idx]
+            moves.append("".join(lst))
+    return moves
+
+def dfs(start, goal):
+    stack = [(start, 0)]
+    parent = {start: None}
+    visited = {start}
+    order = []
+
+    while stack:
+        state, cost = stack.pop()
+        order.append(state)
+        if state == goal:
+            path = []
+            while state:
+                path.append(state)
+                state = parent[state]
+            path.reverse()
+            return path, cost, order, visited
+        for move in reversed(get_moves(state)):
+            if move not in visited:
+                visited.add(move)
+                parent[move] = state
+                stack.append((move, cost+1))
+    return None, -1, order, visited
+
+# ---- Main program ----
+start = input("Enter initial state (e.g., 54_618732): ")
+goal = input("Enter goal state (e.g., 12345678_): ")
+path, cost, visited_order, visited_set = dfs(start, goal)
+
+print("Visited nodes (till goal found):")
+for v in visited_order:
+    for i in range(0, 9, 3):
+        print(v[i:i+3])
+    print()
+    if v == goal:
+        break
+
+print("Steps (solution path):")
+for p in path:
+    for i in range(0, 9, 3):
+        print(p[i:i+3])
+    print()
+
+print("Cost (depth to goal):", cost)
+print("Number of nodes visited:", len(visited_set))
+
+print("Samhitha A 1BM23CS293")
