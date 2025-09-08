@@ -1,0 +1,65 @@
+def get_neighbors(state):
+    neighbors = []
+    idx = state.index("0")
+    x, y = divmod(idx, 3)
+    moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]         
+    for dx, dy in moves:
+        nx, ny = x + dx, y + dy
+        if 0 <= nx < 3 and 0 <= ny < 3:
+            new_idx = nx * 3 + ny
+            state_list = list(state)
+            state_list[idx], state_list[new_idx] = state_list[new_idx], state_list[idx]
+            neighbors.append("".join(state_list))
+    return neighbors
+
+def dfs_limit(start_state, goal_state, limit):
+    stack = [(start_state, 0)] 
+    visited = set([start_state])
+    parent = {start_state: None}
+
+    while stack:
+        current_state, depth = stack.pop()
+        if current_state == goal_state:
+            path = []
+            while current_state:
+                path.append(current_state)
+                current_state = parent[current_state]
+            return path[::-1]
+
+        if depth < limit:
+            for neighbor in get_neighbors(current_state):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    parent[neighbor] = current_state
+                    stack.append((neighbor, depth + 1))
+    return None
+
+def iddfs(start_state, goal_state, max_depth):
+    for limit in range(max_depth + 1):
+        print(f"Searching with depth limit: {limit}")
+        solution = dfs_limit(start_state, goal_state, limit)
+        if solution:
+            return solution
+    return None
+
+print("Enter the initial state (3x3, 0 for empty space):")
+initial_state = "".join(input().split())
+print("Enter the goal state (3x3, 0 for empty space):")
+goal_state = "".join(input().split())
+
+
+max_depth = 50  
+solution = iddfs(initial_state, goal_state, max_depth)
+
+
+if solution:
+    print("\nSolution path:")
+    for state in solution:
+        
+        for i in range(0, 9, 3):
+            print(" ".join(state[i:i+3]))
+        print()  
+else:
+    print("\nNo solution found.")
+
+print("Samhitha A 1BM23CS293")
